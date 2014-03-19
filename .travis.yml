@@ -10,4 +10,4 @@ before_script:
   - psql -c 'create database photoapp;' -U postgres
 # command to run tests
 script:
-    - python django-photos/manage.py test
+    - python django_photos/manage.py test
