@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.7"
+env: DB=postgres
+# command to install dependencies
+install: 
+    - pip install -r requirements.txt
+# commands before running tests
+before_script:
+  - psql -c 'create database photoapp;' -U postgres
+  - psql -d photoapp -c 'create role mark superuser;'
+# command to run tests
+script:
+    - python manage.py test
