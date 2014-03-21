@@ -64,7 +64,7 @@ class TestAlbumAdmin(TestCase):
         self.site = AdminSite()
         self.aa = AlbumAdmin(Album, self.site)
 
-    def testLink(self):
+    def test_link(self):
         expected = '/">tester'
         actual = self.aa.album_link(self.a1)
         self.assertIn(expected, actual)
@@ -90,7 +90,39 @@ class TestPhotoAdmin(TestCase):
         self.site = AdminSite()
         self.pa = PhotoAdmin(Photo, self.site)
 
-    def testLink(self):
+    def test_link(self):
         expected = '/">tester'
         actual = self.pa.photo_link(self.p1)
         self.assertIn(expected, actual)
+
+
+class TestUrlViews(TestCase):
+    fixtures = ['user_fixture.json', ]
+
+    def setUp(self):
+        photog1 = User.objects.get(pk=1)
+        photog2 = User.objects.get(pk=2)
+        # log in photog1
+        for count in range(1, 7):
+            title = "Album %d" % count
+            if count % 2 == 1:
+                album = Album(
+                    title=title,
+                    photog=photog1,
+                    )
+            else:
+                album = Album(
+                    title=title,
+                    photog=photog2,
+                    )
+            album.save()
+
+    def test_only_show_own_(self):
+        resp = self.client.get('/home/')
+        self.assertContains(resp, 'Albums')
+        for count in range(1, 7):
+            title = "Album %d" % count
+            if count % 2 == 1:
+                self.assertContains(resp, title)
+            else:
+                self.assertNotContains(resp, title)

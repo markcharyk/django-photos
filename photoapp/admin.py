@@ -7,7 +7,7 @@ class AlbumAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'created_date', 'album_link')
 
     def album_link(self, album):
-        url = reverse('admin:auth_user_change', args=(album.id,))
+        url = reverse('admin:auth_user_change', args=(album.photog.id,))
         name = album.photog
         return '<a href="%s">%s</a>' % (url, name)
 
@@ -25,7 +25,7 @@ class PhotoAdmin(admin.ModelAdmin):
     inlines = [TagInlineAdmin, ]
 
     def photo_link(self, photo):
-        url = reverse('admin:auth_user_change', args=(photo.id,))
+        url = reverse('admin:auth_user_change', args=(photo.photog.id,))
         name = photo.photog
         return '<a href="%s">%s</a>' % (url, name)
 

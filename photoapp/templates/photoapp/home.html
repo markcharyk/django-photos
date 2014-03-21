@@ -1,0 +1,10 @@
+{% extends 'photoapp/base.html' %}
+
+{% block title %}Your Albums{% endblock %}
+
+{% block content %}
+{% for album in albums %}
+<h3>{{ album.title }}</h3>
+<h6>by {{ album.photog }}<h6>
+{% endfor %}
+{% endblock %}
