@@ -4,7 +4,12 @@
 
 {% block content %}
 {% for album in albums %}
-<h3>{{ album.title }}</h3>
-<h6>by {{ album.photog }}<h6>
+    <h3><a href="/photoapp/album/{{ album.pk }}">{{ album.title }}</a></h3>
+    <h6>by {{ album.photog }}</h6>
+    <ul id='photos'>
+    {% for photo in album.photo_set.all %}
+        <li><a href="/photoapp/album/{{ album.pk }}/photo/{{ photo.pk }}">{{ photo.caption }}</a></li>
+    {% endfor %}
+    </ul>
 {% endfor %}
 {% endblock %}

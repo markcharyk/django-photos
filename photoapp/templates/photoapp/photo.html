@@ -1,0 +1,10 @@
+{% extends 'photoapp/base.html' %}
+
+{% block title %}<h2>{{photo.title}}</h2>{% endblock %}
+
+{% block content %}
+
+<h5>{{ photo.caption }}</h5>
+<a href="/photoapp/album/{{album.pk}}/">Back to album view</a><br>
+<a href="/photoapp/home">Back to home</a>
+{% endblock %}

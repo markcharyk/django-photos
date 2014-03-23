@@ -1,0 +1,8 @@
+{% extends 'photoapp/base.html' %}
+
+{% block title %}<h2>Photos tagged {{ tag }}</h2>{% endblock %}
+
+{% block content %}
+<p>No photos tagged {{ tag }}</p>
+<a href="/photoapp/home">Back to home</a>
+{% endblock %}

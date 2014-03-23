@@ -27,7 +27,7 @@ class Photo(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return 'Photo' + unicode(self.pk)
+        return u'Photo' + unicode(self.pk)
 
     def caption_rep(self):
         if self.caption == '':

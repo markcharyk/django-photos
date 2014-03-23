@@ -4,7 +4,7 @@ urlpatterns = patterns(
     'photoapp.views',
     url(
         r'^$',
-        'stub_view',
+        'index_view',
         name='index',
         ),
     url(
@@ -14,17 +14,17 @@ urlpatterns = patterns(
         ),
     url(
         r'^album/(\d+)/$',
-        'stub_view',
+        'album_view',
         name='album_specific',
         ),
     url(
         r'^album/(\d+)/photo/(\d+)/$',
-        'stub_view',
+        'photo_view',
         name='photo_specific',
         ),
     url(
-        r'^tag/(\d+)/$',
-        'stub_view',
+        r'^tag/(\w+)/$',
+        'tag_view',
         name='tag_specific',
         ),
 )

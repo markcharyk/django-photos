@@ -1,0 +1,79 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+            "fields": {
+            "username": "admin",
+            "password": "iopaivi[28vjsdkl;asdk",
+            "email": "admin@domain.com"
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "notadmin",
+            "password": "iavrnpi42ine[9",
+            "email": "notadmin@domain.com"
+        }
+    },
+    {
+        "model": "photoapp.album",
+        "pk": 1,
+        "fields": {
+            "title": "2014 Summer Fun",
+            "photog": 1,
+            "created_date": "2013-05-24T05:35:58.628Z",
+            "modified_date": "2013-05-24T05:35:58.628Z"
+        }
+    },
+    {
+        "model": "photoapp.album",
+        "pk": 2,
+        "fields": {
+            "title": "Admin Stuff",
+            "photog": 1,
+            "created_date": "2013-05-24T05:35:58.628Z",
+            "modified_date": "2013-05-24T05:35:58.628Z"
+        }
+    },
+    {
+        "model": "photoapp.album",
+        "pk": 3,
+        "fields": {
+            "title": "Not the Stuff of Admins",
+            "photog": 2,
+            "created_date": "2013-05-24T05:35:58.628Z",
+            "modified_date": "2013-05-24T05:35:58.628Z"
+        }
+    },
+    {
+        "model": "photoapp.photo",
+        "pk": 1,
+        "fields": {
+            "caption": "An admin photo",
+            "photog": 1,
+            "album": 2,
+            "created_date": "2013-05-24T05:35:58.628Z",
+            "modified_date": "2013-05-24T05:35:58.628Z"
+        }
+    },
+    {
+        "model": "photoapp.photo",
+        "pk": 2,
+        "fields": {
+            "caption": "Not the photo of an admin",
+            "photog": 2,
+            "album": 3,
+            "created_date": "2013-05-24T05:35:58.628Z",
+            "modified_date": "2013-05-24T05:35:58.628Z"
+        }
+    },
+    {
+        "model": "photoapp.tag",
+        "pk": 1,
+        "fields": {
+            "title": "TestTag"
+        }
+    }
+]
