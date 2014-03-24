@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from photoapp.models import Album, Photo, Tag
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
+from django.core.urlresolvers import reverse
 
 
 def stub_view(request, *args, **kwargs):
@@ -18,13 +19,13 @@ def stub_view(request, *args, **kwargs):
 
 def index_view(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/photoapp/home')
+        return HttpResponseRedirect(reverse('home'))
     return render(request, 'photoapp/index.html', {})
 
 
 def home_view(request):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/photoapp')
+        return HttpResponseRedirect(reverse('index'))
     users_albums = Album.objects.filter(photog=request.user)
     albums = users_albums.order_by('-modified_date')
     context = {'albums': albums, }
@@ -33,7 +34,7 @@ def home_view(request):
 
 def album_view(request, album_no):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/photoapp')
+        return HttpResponseRedirect(reverse('index'))
     alb = Album.objects.get(pk=album_no)
     context = {'album': alb, }
     return render(request, 'photoapp/album.html', context)
@@ -41,7 +42,7 @@ def album_view(request, album_no):
 
 def photo_view(request, album_no, photo_no):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/photoapp')
+        return HttpResponseRedirect(reverse('index'))
     alb = Album.objects.get(pk=album_no)
     photo = Photo.objects.get(pk=photo_no)
     context = {'album': alb, 'photo': photo, }
@@ -50,7 +51,7 @@ def photo_view(request, album_no, photo_no):
 
 def tag_view(request, tag_name):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/photoapp')
+        return HttpResponseRedirect(reverse('index'))
     try:
         tag = Tag.objects.get(title=tag_name)
         context = {'tag': tag, }
@@ -61,7 +62,7 @@ def tag_view(request, tag_name):
 
 def login_view(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/photoapp/home')
+        return HttpResponseRedirect(reverse('home'))
     context = {}
     if request.method == 'POST':
         username = request.POST['username']
@@ -70,7 +71,7 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/photoapp/home')
+                return HttpResponseRedirect(reverse('home'))
             else:
                 return HttpResponse("Your account is disabled")
         else:
@@ -82,4 +83,4 @@ def login_view(request):
 def logout_view(request):
     if request.user.is_authenticated():
         logout(request)
-    return HttpResponseRedirect('/photoapp')
+    return HttpResponseRedirect(reverse('index'))
