@@ -1,10 +1,12 @@
 {% extends 'photoapp/base.html' %}
+{% load staticfiles %}
 
 {% block title %}<h2>{{photo.title}}</h2>{% endblock %}
 
 {% block content %}
 
 <h5>{{ photo.caption }}</h5>
+<img src="{% static photo.image.url %}" /><br>
 <a href="/photoapp/album/{{album.pk}}/">Back to album view</a><br>
 <a href="/photoapp/home">Back to home</a>
 {% endblock %}

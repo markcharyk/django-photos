@@ -1,8 +1,17 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
+<link href= "{% static "photoapp/base.css" %}" rel="stylesheet" type="text/css">
 <head>{% block title %}PhotoApp: {% endblock %}</head>
 
 <body>
+    <div id='loginout'>
+        {% if user.is_authenticated %}
+        <a href="/photoapp/logout">Logout</a>
+        {% else %}
+        <a href="/photoapp/login">Login</a>
+        {% endif %}
+    </div>
     <div id='content'>
         {% block content %}{% endblock %}
     </div>

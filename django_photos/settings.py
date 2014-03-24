@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'photoapp',
-    'south'
+    'south',
+    'sorl.thumbnail'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -62,6 +63,13 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'photoapp',
         'USER': 'mark',
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:8000'
     }
 }
 

@@ -1,11 +1,15 @@
 {% extends 'photoapp/base.html' %}
+{% load thumbnail %}
 
 {% block title %}<h2>{{album.title}}</h2>{% endblock %}
 
 {% block content %}
 
 {% for photo in album.photo_set.all %}
-    <a href="photo/{{photo.pk}}">{{ photo.caption }}</a><br>
+    {% thumbnail photo.image "300x300" as im %}
+        <img src="{{ im.url }}" /><br>
+    {% endthumbnail %}
+    <a href="photo/{{ photo.pk }}">{{ photo.caption }}</a><br>
 {% endfor %}
 <a href="/photoapp/home">Back to home</a>
 {% endblock %}
