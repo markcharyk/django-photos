@@ -7,6 +7,6 @@
 
 <h5>{{ photo.caption }}</h5>
 <img src="{% static photo.image.url %}" /><br>
-<a href="/photoapp/album/{{album.pk}}/">Back to album view</a><br>
-<a href="/photoapp/home">Back to home</a>
+<a href="{% url 'photoapp.views.album_view' album.pk %}">Back to album view</a><br>
+<a href="{% url 'photoapp.views.home_view' %}">Back to home</a>
 {% endblock %}

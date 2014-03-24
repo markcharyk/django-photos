@@ -3,7 +3,7 @@
 {% block title %}<h2>Login</h2>{% endblock %}
 
 {% block content %}
-    <form id="login_form" method="post" action="/photoapp/login/">
+    <form id="login_form" method="post" action="{% url 'photoapp.views.login_view' %}">
         {% csrf_token %}
         Username: <input type="text" name="username" value="" size="50" />
         <br>

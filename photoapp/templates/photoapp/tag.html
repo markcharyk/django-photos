@@ -7,7 +7,7 @@
 
 {% for photo in tag.photos.all %}
     <img src="{% static photo.image.url %}" /><br>
-    <a href="/photoapp/album/{{ photo.album.pk }}/photo/{{photo.pk}}">{{ photo.caption }}</a><br>
+    <a href="{% url 'photoapp.views.photo_view' photo.album.pk photo.pk %}">{{ photo.caption }}</a><br>
 {% endfor %}
-<a href="/photoapp/home">Back to home</a>
+<a href="{% url 'photoapp.views.home_view' %}">Back to home</a>
 {% endblock %}

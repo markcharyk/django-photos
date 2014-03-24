@@ -6,10 +6,9 @@
 {% block content %}
 
 {% for photo in album.photo_set.all %}
-    {% thumbnail photo.image "300x300" as im %}
-        <img src="{{ im.url }}" /><br>
+    {% thumbnail photo.image "200x200" as im %}
+        <a href="{% url 'photoapp.views.photo_view' album.pk photo.pk %}"><img src="{{ im.url }}"/></a><br>
     {% endthumbnail %}
-    <a href="photo/{{ photo.pk }}">{{ photo.caption }}</a><br>
 {% endfor %}
-<a href="/photoapp/home">Back to home</a>
+<a href="{% url 'photoapp.views.home_view' %}">Back to home</a>
 {% endblock %}

@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#3up*y$*+juxdr1vy7a7-o_y8y0q--ajykzeu6#sm005jul56*'
+SECRET_KEY = 'SecretKeyPlaceholder'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -34,11 +34,13 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'photoapp',
     'south',
-    'sorl.thumbnail'
+    'sorl.thumbnail',
+    'registration',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -69,7 +71,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:8000'
+        'LOCATION': '127.0.0.1:11211'
     }
 }
 
@@ -91,3 +93,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+ACCOUNT_ACTIVATION_DAYS = 2
