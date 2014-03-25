@@ -1,13 +1,15 @@
 {% extends 'photoapp/base.html' %}
 {% load staticfiles %}
+{% load thumbnail %}
 
 {% block title %}<h2>Photos tagged "{{ tag.title }}"</h2>{% endblock %}
 
 {% block content %}
 
 {% for photo in tag.photos.all %}
-    <img src="{% static photo.image.url %}" /><br>
-    <a href="{% url 'photoapp.views.photo_view' photo.album.pk photo.pk %}">{{ photo.caption }}</a><br>
+    {% thumbnail photo.image "200x200" as im %}
+        <a href="{% url 'photoapp.views.photo_view' photo.album.pk photo.pk %}"><img src="{{ im.url }}"/></a><br>
+    {% endthumbnail %}
 {% endfor %}
 <a href="{% url 'photoapp.views.home_view' %}">Back to home</a>
 {% endblock %}

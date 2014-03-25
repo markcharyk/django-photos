@@ -37,4 +37,19 @@ urlpatterns = patterns(
         'logout_view',
         name='logout',
         ),
+    url(
+        r'^new_album/$',
+        'new_album',
+        name='new_album',
+        ),
+    url(
+        r'^album/(\d+)/new_photo$',
+        'new_photo',
+        name='new_photo',
+        ),
+    url(
+        r'^album/(\d+)/photo/(\d+)/new_tag/$',
+        'new_tag',
+        name='new_tag',
+        ),
 )

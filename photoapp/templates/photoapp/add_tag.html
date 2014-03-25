@@ -1,0 +1,16 @@
+{% extends 'photoapp/base.html' %}
+{% load thumbnail %}
+
+{% block title %}<h2>Add Tag</h2>{% endblock %}
+
+{% block content %}
+{% thumbnail photo.image "200x200" as im %}
+    <a href="{% url 'photoapp.views.photo_view' album_no photo.pk %}"><img src="{{ im.url }}"/></a><br>
+{% endthumbnail %}
+
+<form action="{% url 'photoapp.views.new_tag' album_no photo.pk %}" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+<a href="{% url 'photoapp.views.home_view' %}">Back to home</a>
+{% endblock %}
