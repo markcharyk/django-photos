@@ -3,9 +3,9 @@
         "model": "auth.user",
         "pk": 1,
             "fields": {
-            "username": "admin",
-            "password": "iopaivi[28vjsdkl;asdk",
-            "email": "admin@domain.com"
+                "username": "admin",
+                "password": "pbkdf2_sha256$12000$FfBeGzOeCxl6$b3yFB9KAB7GYRMrEri+fOtBWXEEpl4Y2uGuSwzScNz0=",
+                "email": "admin@domain.com"
         }
     },
     {
@@ -52,6 +52,7 @@
         "pk": 1,
         "fields": {
             "caption": "An admin photo",
+            "image": "2014/03/19/photo.JPG",
             "photog": 1,
             "album": 2,
             "created_date": "2013-05-24T05:35:58.628Z",
@@ -63,6 +64,7 @@
         "pk": 2,
         "fields": {
             "caption": "Not the photo of an admin",
+            "image": "2014/03/23/IMG_0478.JPG",
             "photog": 2,
             "album": 3,
             "created_date": "2013-05-24T05:35:58.628Z",
@@ -73,7 +75,24 @@
         "model": "photoapp.tag",
         "pk": 1,
         "fields": {
-            "title": "TestTag"
+            "title": "testtag",
+            "photos": [1, 2]
+        }
+    },
+    {
+        "model": "photoapp.tag",
+        "pk": 2,
+        "fields": {
+            "title": "testtagtwo",
+            "photos": [1]
+        }
+    },
+    {
+        "model": "photoapp.tag",
+        "pk": 3,
+        "fields": {
+            "title": "nexttesttag",
+            "photos": []
         }
     }
 ]

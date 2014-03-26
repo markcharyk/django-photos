@@ -1,8 +1,10 @@
 from django.test import TestCase
-from photoapp.models import Album, Photo
+from photoapp.models import Album, Photo, Tag
 from photoapp.admin import AlbumAdmin, PhotoAdmin
 from django.contrib.auth.models import User
+from django.test import Client
 from django.contrib.admin.sites import AdminSite
+from django_photos.settings import MEDIA_ROOT
 
 
 class TestPhoto(TestCase):
@@ -94,26 +96,119 @@ class TestPhotoAdmin(TestCase):
 class TestViews(TestCase):
     fixtures = ['photo_test_fixtures.json', ]
 
+    def setUp(self):
+        self.client = Client()
+        self.client.login(username='admin', password='admin')
+
+    def tearDown(self):
+        self.client.logout()
+
     def test_home_view(self):
-        self.client.login(username='admin')
-        resp = self.client.get('/photoapp/home/')
-        print resp
-        # self.assertContains(resp, 'Albums')
-        # for count in range(1, 7):
-        #     title = "Album %d" % count
-        #     if count % 2 == 1:
-        #         self.assertContains(resp, title)
-        #     else:
-        #         self.assertNotContains(resp, title)
+        resp = self.client.get('/photoapp/home', follow=True)
+        self.assertContains(resp, 'Albums')
+        self.assertContains(resp, '2014 Summer Fun')
+        self.assertContains(resp, 'Admin Stuff')
+        self.assertNotContains(resp, 'Not the Stuff of Admins')
+        self.assertNotContains(resp, 'Login here')
 
     def test_redirect_home(self):
-        self.client.login(username='admin')
-        resp = self.client.get('/photoapp/')
-        print resp
-        # self.assertContains(resp, 'Albums')
-        # for count in range(1, 7):
-        #     title = "Album %d" % count
-        #     if count % 2 == 1:
-        #         self.assertContains(resp, title)
-        #     else:
-        #         self.assertNotContains(resp, title)
+        resp = self.client.get('/photoapp/', follow=True)
+        self.assertContains(resp, 'Albums')
+        self.assertContains(resp, '2014 Summer Fun')
+        self.assertContains(resp, 'Admin Stuff')
+        self.assertNotContains(resp, 'Not the Stuff of Admins')
+        self.assertNotContains(resp, '<b>Log in')
+
+    def test_logged_out(self):
+        self.client.logout()
+        resp = self.client.get('/photoapp/', follow=True)
+        self.assertContains(resp, '<b>Log in')
+        self.assertNotContains(resp, 'Albums')
+
+    def test_logged_out_redirect(self):
+        self.client.logout()
+        resp = self.client.get('/photoapp/home', follow=True)
+        self.assertContains(resp, '<b>Log in')
+        self.assertNotContains(resp, 'Albums')
+        resp = self.client.get('/photoapp/album/2', follow=True)
+        self.assertContains(resp, '<b>Log in')
+        self.assertNotContains(resp, 'Albums')
+        resp = self.client.get('/photoapp/album/2/photo/1', follow=True)
+        self.assertContains(resp, '<b>Log in')
+        self.assertNotContains(resp, 'Albums')
+        resp = self.client.get('/photoapp/tag/screenshot', follow=True)
+        self.assertContains(resp, '<b>Log in')
+        self.assertNotContains(resp, 'Albums')
+
+    def test_album_view(self):
+        resp = self.client.get('/photoapp/album/2', follow=True)
+        self.assertContains(resp, 'Admin Stuff')
+        self.assertNotContains(resp, 'Not the Stuff of Admins')
+        self.assertNotContains(resp, 'Summer Fun')
+
+    def test_invalid_album(self):
+        with self.assertRaises(Album.DoesNotExist):
+            self.client.get('/photoapp/album/4', follow=True)
+
+    def test_photo_view(self):
+        resp = self.client.get('/photoapp/album/2/photo/1', follow=True)
+        self.assertContains(resp, 'An admin photo')
+        self.assertNotContains(resp, 'Not the photo of an admin')
+
+    def test_tag_view(self):
+        resp = self.client.get('/photoapp/tag/testtag', follow=True)
+        self.assertContains(resp, 'album/3/photo/2')
+        self.assertContains(resp, 'album/2/photo/1')
+
+    def test_empty_tag(self):
+        resp = self.client.get('/photoapp/tag/notag', follow=True)
+        self.assertContains(resp, 'No photos tagged')
+        self.assertNotContains(resp, 'album/')
+
+    def test_new_album_get(self):
+        resp = self.client.get('/photoapp/new_album', follow=True)
+        self.assertContains(resp, 'Create Album')
+
+    def test_new_album_post(self):
+        self.client.post(
+            '/photoapp/new_album/',
+            {'title': 'Make a New Album'}
+        )
+        newbie = Album.objects.get(title='Make a New Album')
+        self.assertIsNotNone(newbie)
+
+    def test_new_photo_get(self):
+        resp = self.client.get('/photoapp/album/1/new_photo', follow=True)
+        self.assertContains(resp, 'Add Photo')
+
+    def test_new_photo_post(self):
+        with open('%s/2014/03/19/HAIKUTE.png' % MEDIA_ROOT) as im:
+            self.client.post(
+                '/photoapp/album/1/new_photo/',
+                {'caption': 'Haikute ss', 'image': im}
+            )
+        newbie = Photo.objects.get(caption='Haikute ss')
+        self.assertIsNotNone(newbie)
+
+    def test_new_tag_get(self):
+        resp = self.client.get('/photoapp/album/2/photo/1/new_tag', follow=True)
+        self.assertContains(resp, 'Add Tag')
+
+    def test_new_tag_post(self):
+        self.client.post(
+            '/photoapp/album/2/photo/1/new_tag/',
+            {'title': 'boomerdog'}
+        )
+        newbie = Tag.objects.get(title='boomerdog')
+        self.assertIsNotNone(newbie)
+
+    def test_extant_tag_post(self):
+        self.client.post(
+            '/photoapp/album/3/photo/2/new_tag/',
+            {'title': 'testtagtwo'}
+        )
+        photos = Photo.objects.filter(tag__title='testtagtwo')
+        act_captions = [photos[0].caption, photos[1].caption]
+        exp_captions = ['An admin photo', 'Not the photo of an admin', ]
+        for cap in act_captions:
+            self.assertIn(cap, exp_captions)

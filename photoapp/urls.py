@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, url
+from django.contrib.auth.views import login, logout
 
 urlpatterns = patterns(
     'photoapp.views',
@@ -29,12 +30,12 @@ urlpatterns = patterns(
         ),
     url(
         r'^login/$',
-        'login_view',
+        login,
         name='login',
         ),
     url(
         r'^logout/$',
-        'logout_view',
+        logout,
         name='logout',
         ),
     url(
@@ -43,7 +44,7 @@ urlpatterns = patterns(
         name='new_album',
         ),
     url(
-        r'^album/(\d+)/new_photo$',
+        r'^album/(\d+)/new_photo/$',
         'new_photo',
         name='new_photo',
         ),

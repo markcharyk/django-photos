@@ -28,7 +28,8 @@ def index_view(request):
 def home_view(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('index'))
-    users_albums = Album.objects.filter(photog=request.user)
+    all_albums = Album.objects.all().prefetch_related()
+    users_albums = all_albums.filter(photog=request.user)
     albums = users_albums.order_by('-modified_date')
     context = {'albums': albums, }
     return render(request, 'photoapp/home.html', context)
@@ -51,7 +52,6 @@ def photo_view(request, album_no, photo_no):
     photo = Photo.objects.get(pk=photo_no)
     context = {'album': alb, 'photo': photo, }
     return render(request, 'photoapp/photo.html', context)
-    # album.photo_set
 
 
 def tag_view(request, tag_name):
@@ -65,31 +65,31 @@ def tag_view(request, tag_name):
         return render(request, 'photoapp/no_tag.html', {'tag': tag_name})
 
 
-def login_view(request):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('home'))
-    context = {}
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return HttpResponseRedirect(reverse('home'))
-            else:
-                return HttpResponse("Your account is disabled")
-        else:
-            return HttpResponse('Username/password incorrect')
-    else:
-        return render(request, 'photoapp/login.html', context)
-        # django.contrib.auth.views.login
+# def login_view(request):
+#     if request.user.is_authenticated():
+#         return HttpResponseRedirect(reverse('home'))
+#     context = {}
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(username=username, password=password)
+#         if user is not None:
+#             if user.is_active:
+#                 login(request, user)
+#                 return HttpResponseRedirect(reverse('home'))
+#             else:
+#                 return HttpResponse("Your account is disabled")
+#         else:
+#             return HttpResponse('Username/password incorrect')
+#     else:
+#         return render(request, 'photoapp/login.html', context)
+#         # django.contrib.auth.views.login
 
 
-def logout_view(request):
-    if request.user.is_authenticated():
-        logout(request)
-    return HttpResponseRedirect(reverse('index'))
+# def logout_view(request):
+#     if request.user.is_authenticated():
+#         logout(request)
+#     return HttpResponseRedirect(reverse('index'))
 
 
 @login_required
@@ -108,6 +108,7 @@ def new_album(request):
 
 @login_required
 def new_photo(request, album_no):
+    # import pdb; pdb.set_trace()
     album = Album.objects.get(pk=album_no)
     if request.method == 'POST':
         input_form = PhotoForm(request.POST, request.FILES)

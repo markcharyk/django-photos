@@ -7,9 +7,9 @@
 <body>
     <div id='loginout'>
         {% if user.is_authenticated %}
-        <a href="{% url 'photoapp.views.logout_view' %}">Logout</a>
+        <a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a>
         {% else %}
-        <a href="{% url 'photoapp.views.login_view' %}">Login</a>
+        <a href="{% url 'django.contrib.auth.views.login' %}">Login</a>
         {% endif %}
     </div>
     <div id='content'>

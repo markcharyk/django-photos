@@ -1,0 +1,11 @@
+{% extends 'photoapp/base.html' %}
+{% block content %}
+<script>
+    function redirect(){
+       window.location.href = "{% url 'photoapp.views.index_view' %}";
+    }
+    setTimeout(redirect, 5000); 
+</script>
+<p>You have been logged out</p>
+<p>Redirecting to front page...</p>
+{% endblock %}

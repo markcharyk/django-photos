@@ -34,7 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'photoapp',
@@ -64,7 +64,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'photoapp',
-        'USER': 'mark',
+        # 'USER': 'mark',
     }
 }
 
@@ -98,3 +98,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 ACCOUNT_ACTIVATION_DAYS = 2
+
+LOGIN_REDIRECT_URL = '/photoapp/home'
