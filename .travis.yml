@@ -8,7 +8,6 @@ install:
 # commands before running tests
 before_script:
   - psql -c 'create database photoapp;' -U postgres
-  - psql -d photoapp -c 'create role mark superuser;'
 # command to run tests
 script:
     - python manage.py test
