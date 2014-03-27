@@ -1,22 +1,21 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from photoapp.models import Album, Photo, Tag
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from photoapp.forms import AlbumForm, PhotoForm, TagForm
 
 
-def stub_view(request, *args, **kwargs):
-    body = "Stub view\n\n"
-    if args:
-        body += "Args:\n"
-        body += "\n".join(["\t%s" % a for a in args])
-    if kwargs:
-        body += "Kwargs:\n"
-        body += "\n".join(["\t%s: %s" % i for i in kwargs.items()])
-    return HttpResponse(body, content_type='text/plain')
+# def stub_view(request, *args, **kwargs):
+#     body = "Stub view\n\n"
+#     if args:
+#         body += "Args:\n"
+#         body += "\n".join(["\t%s" % a for a in args])
+#     if kwargs:
+#         body += "Kwargs:\n"
+#         body += "\n".join(["\t%s: %s" % i for i in kwargs.items()])
+#     return HttpResponse(body, content_type='text/plain')
 
 
 def index_view(request):
@@ -33,8 +32,6 @@ def home_view(request):
     albums = users_albums.order_by('-modified_date')
     context = {'albums': albums, }
     return render(request, 'photoapp/home.html', context)
-    # all = Album.objects.all().select_related('photos')
-    # all = Album.objects.all().prefetch_related()
 
 
 def album_view(request, album_no):
@@ -65,34 +62,7 @@ def tag_view(request, tag_name):
         return render(request, 'photoapp/no_tag.html', {'tag': tag_name})
 
 
-# def login_view(request):
-#     if request.user.is_authenticated():
-#         return HttpResponseRedirect(reverse('home'))
-#     context = {}
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(username=username, password=password)
-#         if user is not None:
-#             if user.is_active:
-#                 login(request, user)
-#                 return HttpResponseRedirect(reverse('home'))
-#             else:
-#                 return HttpResponse("Your account is disabled")
-#         else:
-#             return HttpResponse('Username/password incorrect')
-#     else:
-#         return render(request, 'photoapp/login.html', context)
-#         # django.contrib.auth.views.login
-
-
-# def logout_view(request):
-#     if request.user.is_authenticated():
-#         logout(request)
-#     return HttpResponseRedirect(reverse('index'))
-
-
-@login_required
+@permission_required('photoapp.can_add_album')
 def new_album(request):
     if request.method == 'POST':
         input_form = AlbumForm(request.POST)
@@ -106,9 +76,8 @@ def new_album(request):
     return render(request, 'photoapp/new_album.html', {'form': form})
 
 
-@login_required
+@permission_required('photoapp.can_add_photo')
 def new_photo(request, album_no):
-    # import pdb; pdb.set_trace()
     album = Album.objects.get(pk=album_no)
     if request.method == 'POST':
         input_form = PhotoForm(request.POST, request.FILES)
@@ -130,7 +99,7 @@ def new_photo(request, album_no):
     )
 
 
-@login_required
+@permission_required('photoapp.can_add_tag')
 def new_tag(request, album_no, photo_no):
     photo = Photo.objects.get(pk=photo_no)
     if request.method == 'POST':

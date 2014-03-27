@@ -64,7 +64,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'photoapp',
-        # 'USER': 'mark',
     }
 }
 
@@ -98,5 +97,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 ACCOUNT_ACTIVATION_DAYS = 2
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'testing@example.com'
 
+LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/photoapp/home'
+
+# python -m smtpd -n -c DebuggingServer localhost:1025
