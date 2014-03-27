@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from photoapp.models import Album, Photo, Tag
-from django.http import HttpResponseRedirect
-from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from photoapp.forms import AlbumForm, PhotoForm, TagForm
@@ -24,9 +23,8 @@ def index_view(request):
     return render(request, 'photoapp/index.html', {})
 
 
+@login_required
 def home_view(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('index'))
     all_albums = Album.objects.all().prefetch_related()
     users_albums = all_albums.filter(photog=request.user)
     albums = users_albums.order_by('-modified_date')
@@ -34,29 +32,39 @@ def home_view(request):
     return render(request, 'photoapp/home.html', context)
 
 
+@login_required
 def album_view(request, album_no):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('index'))
-    alb = Album.objects.get(pk=album_no)
+    try:
+        alb = Album.objects.get(pk=album_no)
+    except Album.DoesNotExist:
+        raise Http404("Not here. Plz try again.")
+    if alb.photog.pk != request.user.pk:
+        return HttpResponseForbidden("403. Look it up.")
     context = {'album': alb, }
     return render(request, 'photoapp/album.html', context)
 
 
+@login_required
 def photo_view(request, album_no, photo_no):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('index'))
-    alb = Album.objects.get(pk=album_no)
-    photo = Photo.objects.get(pk=photo_no)
+    try:
+        alb = Album.objects.get(pk=album_no)
+        photo = Photo.objects.get(pk=photo_no)
+    except Album.DoesNotExist:
+        raise Http404("Not here. Plz try again.")
+    except Photo.DoesNotExist:
+        raise Http404("Not here. Plz try again.")
+    if photo.photog.pk != request.user.pk:
+        return HttpResponseForbidden("403. Look it up.")
     context = {'album': alb, 'photo': photo, }
     return render(request, 'photoapp/photo.html', context)
 
 
+@login_required
 def tag_view(request, tag_name):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('index'))
     try:
         tag = Tag.objects.get(title=tag_name.lower())
-        context = {'tag': tag, }
+        photos = tag.photos.filter(photog__exact=request.user)
+        context = {'tag': tag, 'photos': photos}
         return render(request, 'photoapp/tag.html', context)
     except Tag.DoesNotExist:
         return render(request, 'photoapp/no_tag.html', {'tag': tag_name})
@@ -79,6 +87,8 @@ def new_album(request):
 @permission_required('photoapp.add_photo')
 def new_photo(request, album_no):
     album = Album.objects.get(pk=album_no)
+    if album.photog.pk != request.user.pk:
+        return HttpResponseForbidden("403. Look it up.")
     if request.method == 'POST':
         input_form = PhotoForm(request.POST, request.FILES)
         if input_form.is_valid():
@@ -102,6 +112,8 @@ def new_photo(request, album_no):
 @permission_required('photoapp.add_tag')
 def new_tag(request, album_no, photo_no):
     photo = Photo.objects.get(pk=photo_no)
+    if photo.photog.pk != request.user.pk:
+        return HttpResponseForbidden("403. Look it up.")
     if request.method == 'POST':
         input_form = TagForm(request.POST)
         if input_form.is_valid():

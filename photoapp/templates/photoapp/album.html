@@ -10,6 +10,5 @@
         <a href="{% url 'photoapp.views.photo_view' album.pk photo.pk %}"><img src="{{ im.url }}"/></a><br>
     {% endthumbnail %}
 {% endfor %}
-<a href="{% url 'photoapp.views.new_photo' album.pk %}">Add a new photo</a><br>
-<a href="{% url 'photoapp.views.home_view' %}">Back to home</a>
+<a href="{% url 'photoapp.views.new_photo' album.pk %}">Add a new photo</a>
 {% endblock %}

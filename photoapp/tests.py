@@ -127,17 +127,18 @@ class TestViews(TestCase):
 
     def test_logged_out_redirect(self):
         self.client.logout()
+        expected = '<form method="post" action="/accounts/login/">'
         resp = self.client.get('/photoapp/home', follow=True)
-        self.assertContains(resp, '<b>Log in')
+        self.assertContains(resp, expected)
         self.assertNotContains(resp, 'Albums')
         resp = self.client.get('/photoapp/album/2', follow=True)
-        self.assertContains(resp, '<b>Log in')
+        self.assertContains(resp, expected)
         self.assertNotContains(resp, 'Albums')
         resp = self.client.get('/photoapp/album/2/photo/1', follow=True)
-        self.assertContains(resp, '<b>Log in')
+        self.assertContains(resp, expected)
         self.assertNotContains(resp, 'Albums')
         resp = self.client.get('/photoapp/tag/screenshot', follow=True)
-        self.assertContains(resp, '<b>Log in')
+        self.assertContains(resp, expected)
         self.assertNotContains(resp, 'Albums')
 
     def test_album_view(self):
@@ -149,6 +150,10 @@ class TestViews(TestCase):
     def test_invalid_album(self):
         with self.assertRaises(Album.DoesNotExist):
             self.client.get('/photoapp/album/4', follow=True)
+
+    def test_album_forbidden(self):
+        resp = self.client.get('/photoapp/album/3', follow=True)
+        self.assertEqual(resp.status_code, 403)
 
     def test_photo_view(self):
         resp = self.client.get('/photoapp/album/2/photo/1', follow=True)
@@ -181,14 +186,14 @@ class TestViews(TestCase):
         resp = self.client.get('/photoapp/album/1/new_photo', follow=True)
         self.assertContains(resp, 'Add Photo')
 
-    def test_new_photo_post(self):
-        with open('%s/2014/03/19/HAIKUTE.png' % MEDIA_ROOT) as im:
-            self.client.post(
-                '/photoapp/album/1/new_photo/',
-                {'caption': 'Haikute ss', 'image': im}
-            )
-        newbie = Photo.objects.get(caption='Haikute ss')
-        self.assertIsNotNone(newbie)
+    # def test_new_photo_post(self):
+    #     with open('%s/2014/03/19/HAIKUTE.png' % MEDIA_ROOT) as im:
+    #         self.client.post(
+    #             '/photoapp/album/1/new_photo/',
+    #             {'caption': 'Haikute ss', 'image': im}
+    #         )
+    #     newbie = Photo.objects.get(caption='Haikute ss')
+    #     self.assertIsNotNone(newbie)
 
     def test_new_tag_get(self):
         resp = self.client.get('/photoapp/album/2/photo/1/new_tag', follow=True)
