@@ -2,10 +2,13 @@
     {
         "model": "auth.user",
         "pk": 1,
-            "fields": {
-                "username": "admin",
-                "password": "pbkdf2_sha256$12000$FfBeGzOeCxl6$b3yFB9KAB7GYRMrEri+fOtBWXEEpl4Y2uGuSwzScNz0=",
-                "email": "admin@domain.com"
+        "fields": {
+            "username": "admin",
+            "password": "pbkdf2_sha256$12000$FfBeGzOeCxl6$b3yFB9KAB7GYRMrEri+fOtBWXEEpl4Y2uGuSwzScNz0=",
+            "email": "admin@domain.com",
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true
         }
     },
     {
@@ -14,7 +17,10 @@
         "fields": {
             "username": "notadmin",
             "password": "iavrnpi42ine[9",
-            "email": "notadmin@domain.com"
+            "email": "notadmin@domain.com",
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true
         }
     },
     {
