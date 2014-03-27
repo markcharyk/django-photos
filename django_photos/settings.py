@@ -106,4 +106,4 @@ DEFAULT_FROM_EMAIL = 'testing@example.com'
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/photoapp/home'
 
-# python -m smtpd -n -c DebuggingServer localhost:1025
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
