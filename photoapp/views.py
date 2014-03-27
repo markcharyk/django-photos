@@ -62,7 +62,7 @@ def tag_view(request, tag_name):
         return render(request, 'photoapp/no_tag.html', {'tag': tag_name})
 
 
-@permission_required('photoapp.can_add_album')
+@permission_required('photoapp.add_album')
 def new_album(request):
     if request.method == 'POST':
         input_form = AlbumForm(request.POST)
@@ -76,7 +76,7 @@ def new_album(request):
     return render(request, 'photoapp/new_album.html', {'form': form})
 
 
-@permission_required('photoapp.can_add_photo')
+@permission_required('photoapp.add_photo')
 def new_photo(request, album_no):
     album = Album.objects.get(pk=album_no)
     if request.method == 'POST':
@@ -99,7 +99,7 @@ def new_photo(request, album_no):
     )
 
 
-@permission_required('photoapp.can_add_tag')
+@permission_required('photoapp.add_tag')
 def new_tag(request, album_no, photo_no):
     photo = Photo.objects.get(pk=photo_no)
     if request.method == 'POST':

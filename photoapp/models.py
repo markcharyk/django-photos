@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
+from registration.signals import user_activated
+from django.dispatch import receiver
 
 
 class Album(models.Model):
@@ -41,3 +43,9 @@ class Tag(models.Model):
 
     def __unicode__(self):
         return self.title
+
+
+@receiver(user_activated)
+def apply_perms(sender, **kwargs):
+    auths = Group.objects.get(name='Activated')
+    auths.user_set.add(kwargs['user'])
