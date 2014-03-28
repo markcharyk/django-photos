@@ -27,8 +27,10 @@ def index_view(request):
 def home_view(request):
     all_albums = Album.objects.all().prefetch_related()
     users_albums = all_albums.filter(photog=request.user)
+    other_albums = all_albums.filter(public=True).exclude(photog=request.user)
     albums = users_albums.order_by('-modified_date')
-    context = {'albums': albums, }
+    sec_albums = other_albums.order_by('-modified_date')
+    context = {'albums': albums, 'sec_albums': sec_albums, }
     return render(request, 'photoapp/home.html', context)
 
 
@@ -38,9 +40,11 @@ def album_view(request, album_no):
         alb = Album.objects.get(pk=album_no)
     except Album.DoesNotExist:
         raise Http404("Not here. Plz try again.")
-    if alb.photog.pk != request.user.pk:
+    if alb.photog.pk != request.user.pk and (not alb.public):
         return HttpResponseForbidden("403. Look it up.")
-    context = {'album': alb, }
+    context = {'album': alb, 'owner': True}
+    if alb.photog.pk != request.user.pk:
+        context['owner'] = False
     return render(request, 'photoapp/album.html', context)
 
 
@@ -53,9 +57,11 @@ def photo_view(request, album_no, photo_no):
         raise Http404("Not here. Plz try again.")
     except Photo.DoesNotExist:
         raise Http404("Not here. Plz try again.")
-    if photo.photog.pk != request.user.pk:
+    if photo.photog.pk != request.user.pk and (not alb.public):
         return HttpResponseForbidden("403. Look it up.")
-    context = {'album': alb, 'photo': photo, }
+    context = {'album': alb, 'photo': photo, 'owner': True}
+    if photo.photog.pk != request.user.pk:
+        context['owner'] = False
     return render(request, 'photoapp/photo.html', context)
 
 
@@ -63,8 +69,14 @@ def photo_view(request, album_no, photo_no):
 def tag_view(request, tag_name):
     try:
         tag = Tag.objects.get(title=tag_name.lower())
-        photos = tag.photos.filter(photog__exact=request.user)
-        context = {'tag': tag, 'photos': photos}
+        user_photos = tag.photos.filter(photog__exact=request.user)
+        o_photos = tag.photos.exclude(photog__exact=request.user)
+        other_photos = o_photos.filter(album__public=True)
+        context = {
+            'tag': tag,
+            'user_photos': user_photos,
+            'other_photos': other_photos
+        }
         return render(request, 'photoapp/tag.html', context)
     except Tag.DoesNotExist:
         return render(request, 'photoapp/no_tag.html', {'tag': tag_name})
@@ -78,6 +90,10 @@ def new_album(request):
             new_alb = Album()
             new_alb.title = input_form.cleaned_data['title']
             new_alb.photog = request.user
+            if input_form.cleaned_data['privacy'] == "True":
+                new_alb.public = True
+            else:
+                new_alb.public = False
             new_alb.save()
             return HttpResponseRedirect(reverse('home'))
     form = AlbumForm()

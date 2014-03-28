@@ -1,14 +1,20 @@
 {% extends 'photoapp/base.html' %}
 {% load thumbnail %}
 
-{% block title %}<h2>{{album.title}}</h2>{% endblock %}
-
+{% block title %}{{album.title}}{% endblock %}
 {% block content %}
-
+<h2>{{album.title}}</h2>
+{% if owner %}
+    <p>This album is {% if album.public %}public{% else %}private{% endif %}</p>
+{% else %}
+    <p>by {{album.photog}}</p>
+{% endif %}
 {% for photo in album.photo_set.all %}
     {% thumbnail photo.image "200x200" as im %}
         <a href="{% url 'photoapp.views.photo_view' album.pk photo.pk %}"><img src="{{ im.url }}"/></a><br>
     {% endthumbnail %}
 {% endfor %}
-<a href="{% url 'photoapp.views.new_photo' album.pk %}">Add a new photo</a>
+{% if owner %}
+    <a href="{% url 'photoapp.views.new_photo' album.pk %}">Add a new photo</a>
+{% endif %}
 {% endblock %}

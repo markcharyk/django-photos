@@ -2,7 +2,9 @@
 <!DOCTYPE html>
 <html>
 <link href= "{% static "photoapp/base.css" %}" rel="stylesheet" type="text/css">
-<head>{% block title %}PhotoApp: {% endblock %}</head>
+<head>
+    <title>PhotoApp: {% block title %}{% endblock %}</title>
+</head>
 
 <body>
     <div id='loginout'>

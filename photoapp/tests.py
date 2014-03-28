@@ -16,7 +16,8 @@ class TestPhoto(TestCase):
             )
         self.a1 = Album.objects.create(
             title="2014 Summer Fun",
-            photog=self.u1
+            photog=self.u1,
+            public=True
         )
         self.p1 = Photo.objects.create(
             photog=self.u1,
@@ -58,7 +59,8 @@ class TestAlbumAdmin(TestCase):
             )
         self.a1 = Album.objects.create(
             title="2014 Summer Fun",
-            photog=self.u1
+            photog=self.u1,
+            public=True
         )
         self.site = AdminSite()
         self.aa = AlbumAdmin(Album, self.site)
@@ -78,7 +80,8 @@ class TestPhotoAdmin(TestCase):
                 )
             self.a1 = Album.objects.create(
                 title="2014 Summer Fun",
-                photog=self.u1
+                photog=self.u1,
+                public=True
             )
             self.p1 = Photo.objects.create(
                 photog=self.u1,
@@ -108,7 +111,7 @@ class TestViews(TestCase):
         self.assertContains(resp, 'Albums')
         self.assertContains(resp, '2014 Summer Fun')
         self.assertContains(resp, 'Admin Stuff')
-        self.assertNotContains(resp, 'Not the Stuff of Admins')
+        self.assertContains(resp, 'Not the Stuff of Admins')
         self.assertNotContains(resp, 'Login here')
 
     def test_redirect_home(self):
@@ -116,7 +119,7 @@ class TestViews(TestCase):
         self.assertContains(resp, 'Albums')
         self.assertContains(resp, '2014 Summer Fun')
         self.assertContains(resp, 'Admin Stuff')
-        self.assertNotContains(resp, 'Not the Stuff of Admins')
+        self.assertContains(resp, 'Not the Stuff of Admins')
         self.assertNotContains(resp, '<b>Log in')
 
     def test_logged_out(self):
@@ -148,11 +151,13 @@ class TestViews(TestCase):
         self.assertNotContains(resp, 'Summer Fun')
 
     def test_invalid_album(self):
-        with self.assertRaises(Album.DoesNotExist):
-            self.client.get('/photoapp/album/4', follow=True)
+        resp = self.client.get('/photoapp/album/32', follow=True)
+        self.assertEqual(resp.status_code, 404)
 
     def test_album_forbidden(self):
-        resp = self.client.get('/photoapp/album/3', follow=True)
+        self.client.logout()
+        self.client.login(username='thor', password='lokisbro')
+        resp = self.client.get('/photoapp/album/2', follow=True)
         self.assertEqual(resp.status_code, 403)
 
     def test_photo_view(self):
@@ -177,7 +182,7 @@ class TestViews(TestCase):
     def test_new_album_post(self):
         self.client.post(
             '/photoapp/new_album/',
-            {'title': 'Make a New Album'}
+            {'title': 'Make a New Album', 'privacy': "True"}
         )
         newbie = Album.objects.get(title='Make a New Album')
         self.assertIsNotNone(newbie)
@@ -186,14 +191,14 @@ class TestViews(TestCase):
         resp = self.client.get('/photoapp/album/1/new_photo', follow=True)
         self.assertContains(resp, 'Add Photo')
 
-    # def test_new_photo_post(self):
-    #     with open('%s/2014/03/19/HAIKUTE.png' % MEDIA_ROOT) as im:
-    #         self.client.post(
-    #             '/photoapp/album/1/new_photo/',
-    #             {'caption': 'Haikute ss', 'image': im}
-    #         )
-    #     newbie = Photo.objects.get(caption='Haikute ss')
-    #     self.assertIsNotNone(newbie)
+    def test_new_photo_post(self):
+        with open('%s/2014/03/19/HAIKUTE.png' % MEDIA_ROOT) as im:
+            self.client.post(
+                '/photoapp/album/1/new_photo/',
+                {'caption': 'Haikute ss', 'image': im}
+            )
+        newbie = Photo.objects.get(caption='Haikute ss')
+        self.assertIsNotNone(newbie)
 
     def test_new_tag_get(self):
         resp = self.client.get('/photoapp/album/2/photo/1/new_tag', follow=True)
@@ -208,6 +213,8 @@ class TestViews(TestCase):
         self.assertIsNotNone(newbie)
 
     def test_extant_tag_post(self):
+        self.client.logout()
+        self.client.login(username='thor', password='lokisbro')
         self.client.post(
             '/photoapp/album/3/photo/2/new_tag/',
             {'title': 'testtagtwo'}

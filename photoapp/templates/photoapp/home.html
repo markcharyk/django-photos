@@ -4,16 +4,29 @@
 {% block title %}Your Albums{% endblock %}
 
 {% block content %}
+<h1>Your Albums</h1>
 {% for album in albums %}
     <h3><a href="{% url 'photoapp.views.album_view' album.pk %}">{{ album.title }}</a></h3>
-    <h6>by {{ album.photog }}</h6>
-    <ul id='photos'>
+    <div id='photos'>
     {% for photo in album.photo_set.all %}
         {% thumbnail photo.image "200x200" as im %}
             <a href="{% url 'photoapp.views.photo_view' album.pk photo.pk %}"><img src="{{ im.url }}"/></a>
         {% endthumbnail %}
     {% endfor %}
-    </ul>
-{% endfor %}
+    </div>
+{% endfor %}<br>
 <a href="{% url 'photoapp.views.new_album' %}">Create a new album</a>
+<br><br><br><br>
+<h1>Others' Albums</h1>
+{% for album in sec_albums %}
+    <h3><a href="{% url 'photoapp.views.album_view' album.pk %}">{{ album.title }}</a></h3>
+    <h6>by {{ album.photog }}</h6>
+    <div id='photos'>
+    {% for photo in album.photo_set.all %}
+        {% thumbnail photo.image "200x200" as im %}
+            <a href="{% url 'photoapp.views.photo_view' album.pk photo.pk %}"><img src="{{ im.url }}"/></a>
+        {% endthumbnail %}
+    {% endfor %}
+    </d>
+{% endfor %}
 {% endblock %}

@@ -2,12 +2,19 @@
 {% load staticfiles %}
 {% load thumbnail %}
 
-{% block title %}<h2>Photos tagged "{{ tag.title }}"</h2>{% endblock %}
+{% block title %}{{ tag.title }}{% endblock %}
 
 {% block content %}
-
-{% for photo in photos %}
+<h2>Your photos tagged "{{ tag.title }}"</h2>
+{% for photo in user_photos %}
     {% thumbnail photo.image "200x200" as im %}
+        <a href="{% url 'photoapp.views.photo_view' photo.album.pk photo.pk %}"><img src="{{ im.url }}"/></a><br>
+    {% endthumbnail %}
+{% endfor %}
+<h2>Other photos tagged "{{ tag.title }}"</h2>
+{% for photo in other_photos %}
+    {% thumbnail photo.image "200x200" as im %}
+        <h6>by {{ photo.album.photog }} in <a href="{% url 'photoapp.views.album_view' photo.album.pk %}">{{ photo.album }}</a></h6>
         <a href="{% url 'photoapp.views.photo_view' photo.album.pk photo.pk %}"><img src="{{ im.url }}"/></a><br>
     {% endthumbnail %}
 {% endfor %}

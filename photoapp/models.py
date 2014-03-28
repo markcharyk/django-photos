@@ -9,6 +9,7 @@ class Album(models.Model):
     photog = models.ForeignKey(User)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+    public = models.BooleanField()
 
     def __unicode__(self):
         return self.title
