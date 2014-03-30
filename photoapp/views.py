@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from photoapp.forms import AlbumForm, PhotoForm, TagForm
+from re import sub
 
 
 # def stub_view(request, *args, **kwargs):
@@ -88,7 +89,10 @@ def new_album(request):
         input_form = AlbumForm(request.POST)
         if input_form.is_valid():
             new_alb = Album()
-            new_alb.title = input_form.cleaned_data['title']
+            new_title = input_form.cleaned_data['title']
+            if len(new_title) > 128:
+                new_title = new_title[:127]
+            new_alb.title = new_title
             new_alb.photog = request.user
             if input_form.cleaned_data['privacy'] == "True":
                 new_alb.public = True
@@ -133,7 +137,8 @@ def new_tag(request, album_no, photo_no):
     if request.method == 'POST':
         input_form = TagForm(request.POST)
         if input_form.is_valid():
-            new_title = input_form.cleaned_data['title'].lower()
+            partly_cleaned = input_form.cleaned_data['title'].lower()
+            new_title = sub(r'\W+', '', partly_cleaned)
             try:
                 old_tag = Tag.objects.get(title=new_title)
                 old_tag.photos.add(photo)

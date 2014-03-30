@@ -122,6 +122,14 @@ class TestViews(TestCase):
         self.assertContains(resp, 'Not the Stuff of Admins')
         self.assertNotContains(resp, '<b>Log in')
 
+    def test_home_public_private(self):
+        self.client.logout()
+        self.client.login(username='thor', password='lokisbro')
+        resp = self.client.get('/photoapp/home', follow=True)
+        self.assertContains(resp, 'Not the Stuff of Admins')
+        self.assertContains(resp, '2014 Summer Fun')
+        self.assertNotContains(resp, 'Admin Stuff')
+
     def test_logged_out(self):
         self.client.logout()
         resp = self.client.get('/photoapp/', follow=True)
@@ -160,10 +168,33 @@ class TestViews(TestCase):
         resp = self.client.get('/photoapp/album/2', follow=True)
         self.assertEqual(resp.status_code, 403)
 
+    def test_album_not_forbidden(self):
+        self.client.logout()
+        self.client.login(username='thor', password='lokisbro')
+        resp = self.client.get('/photoapp/album/1', follow=True)
+        self.assertContains(resp, 'Summer Fun')
+        self.assertEqual(resp.status_code, 200)
+
     def test_photo_view(self):
         resp = self.client.get('/photoapp/album/2/photo/1', follow=True)
         self.assertContains(resp, 'An admin photo')
         self.assertNotContains(resp, 'Not the photo of an admin')
+
+    def test_invalid_photo(self):
+        resp = self.client.get('/hotoapp/album/2/photo/15', follow=True)
+        self.assertEqual(resp.status_code, 404)
+
+    def test_photo_forbidden(self):
+        self.client.logout()
+        self.client.login(username='thor', password='lokisbro')
+        resp = self.client.get('/photoapp/album/2/photo/1', follow=True)
+        self.assertEqual(resp.status_code, 403)
+
+    def test_photo_not_forbidden(self):
+        self.client.logout()
+        self.client.login(username='thor', password='lokisbro')
+        resp = self.client.get('/photoapp/album/1/photo/3', follow=True)
+        self.assertContains(resp, "Admin&#39;s public photo")
 
     def test_tag_view(self):
         resp = self.client.get('/photoapp/tag/testtag', follow=True)
@@ -174,6 +205,13 @@ class TestViews(TestCase):
         resp = self.client.get('/photoapp/tag/notag', follow=True)
         self.assertContains(resp, 'No photos tagged')
         self.assertNotContains(resp, 'album/')
+
+    def test_tag_public_private(self):
+        self.client.logout()
+        self.client.login(username='thor', password='lokisbro')
+        resp = self.client.get('/photoapp/tag/publicprivate', follow=True)
+        self.assertContains(resp, 'photo/3')
+        self.assertNotContains(resp, 'photo/1')
 
     def test_new_album_get(self):
         resp = self.client.get('/photoapp/new_album', follow=True)
@@ -201,7 +239,10 @@ class TestViews(TestCase):
         self.assertIsNotNone(newbie)
 
     def test_new_tag_get(self):
-        resp = self.client.get('/photoapp/album/2/photo/1/new_tag', follow=True)
+        resp = self.client.get(
+            '/photoapp/album/2/photo/1/new_tag',
+            follow=True
+        )
         self.assertContains(resp, 'Add Tag')
 
     def test_new_tag_post(self):
@@ -224,3 +265,11 @@ class TestViews(TestCase):
         exp_captions = ['An admin photo', 'Not the photo of an admin', ]
         for cap in act_captions:
             self.assertIn(cap, exp_captions)
+
+    def test_non_alnum_tag(self):
+        self.client.post(
+            '/photoapp/album/2/photo/1/new_tag/',
+            {'title': 'tag_with_weird0$&@^'}
+        )
+        newbie = Tag.objects.get(title='tag_with_weird0')
+        self.assertIsNotNone(newbie)

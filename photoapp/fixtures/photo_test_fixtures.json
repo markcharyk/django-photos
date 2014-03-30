@@ -81,6 +81,18 @@
         }
     },
     {
+        "model": "photoapp.photo",
+        "pk": 3,
+        "fields": {
+            "caption": "Admin's public photo",
+            "image": "2014/03/24/Screenshot_from_2014-02-25_195340.png",
+            "photog": 1,
+            "album": 1,
+            "created_date": "2014-02-24T05:11:11.628Z",
+            "modified_date": "2014-02-24T05:11:11.628Z"
+        }
+    },
+    {
         "model": "photoapp.tag",
         "pk": 1,
         "fields": {
@@ -102,6 +114,14 @@
         "fields": {
             "title": "nexttesttag",
             "photos": []
+        }
+    },
+    {
+        "model": "photoapp.tag",
+        "pk": 4,
+        "fields": {
+            "title": "publicprivate",
+            "photos": [1, 3]
         }
     }
 ]
