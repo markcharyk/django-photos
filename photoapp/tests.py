@@ -4,7 +4,7 @@ from photoapp.admin import AlbumAdmin, PhotoAdmin
 from django.contrib.auth.models import User
 from django.test import Client
 from django.contrib.admin.sites import AdminSite
-from django_photos.settings import MEDIA_ROOT
+from django_photos.settings import Base
 
 
 class TestPhoto(TestCase):
@@ -192,7 +192,7 @@ class TestViews(TestCase):
         self.assertContains(resp, 'Add Photo')
 
     def test_new_photo_post(self):
-        with open('%s/2014/03/19/HAIKUTE.png' % MEDIA_ROOT) as im:
+        with open('%s/2014/03/19/HAIKUTE.png' % Base.MEDIA_ROOT) as im:
             self.client.post(
                 '/photoapp/album/1/new_photo/',
                 {'caption': 'Haikute ss', 'image': im}

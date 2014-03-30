@@ -103,13 +103,3 @@ class Dev(Base):
     DEFAULT_FROM_EMAIL = 'testing@example.com'
 
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-
-# class Prod(Base):
-#     DEBUG = False
-
-#     # AWS_STORAGE_BUCKET_NAME = 'mark-charyk-photoapp'
-#     # STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-#     # S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
-#     # STATIC_URL = S3_URL
-#     STATIC_URL = os.path.join(BASE_DIR, 'static')

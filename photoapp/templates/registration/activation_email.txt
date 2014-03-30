@@ -1,6 +1,6 @@
 You signed up for my photoapp! Cool beans. Please confirm your registration by following these instructions.
 1) Click the link below:
 
-{{ site.domain }}/accounts/activate/{{ activation_key }}
+http://{{ site.domain }}/accounts/activate/{{ activation_key }}
 
 You have {{ expiration_days }} day{% if expiration_days > 1 %}s{% endif %} to click.

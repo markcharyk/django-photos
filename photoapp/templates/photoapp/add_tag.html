@@ -1,9 +1,11 @@
 {% extends 'photoapp/base.html' %}
 {% load thumbnail %}
 
-{% block title %}<h2>Add Tag</h2>{% endblock %}
+{% block title %}Tag a photo{% endblock %}
 
 {% block content %}
+
+<h2>Add Tag</h2>
 {% thumbnail photo.image "200x200" as im %}
     <a href="{% url 'photoapp.views.photo_view' album_no photo.pk %}"><img src="{{ im.url }}"/></a><br>
 {% endthumbnail %}

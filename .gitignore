@@ -54,6 +54,7 @@ docs/_build/
 
 # Media
 media/
+static/admin*
 
 # Production settings
 *prod-settings.py

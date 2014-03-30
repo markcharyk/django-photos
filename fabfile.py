@@ -136,8 +136,8 @@ def _install_nginx():
 
 def _sync_project():
     rsync_project('~/django-photos/')
-    run('source django-photos/bin/activate')
-    run('pip install -r django-photos/django_photos/requirements.txt')
+    # run('source django-photos/bin/activate')
+    # run('pip install -r django-photos/django_photos/requirements.txt')
 
 
 def install_nginx():

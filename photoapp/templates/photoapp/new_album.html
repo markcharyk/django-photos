@@ -1,8 +1,9 @@
 {% extends 'photoapp/base.html' %}
 
-{% block title %}<h2>Create Album</h2>{% endblock %}
+{% block title %}Create Album{% endblock %}
 
 {% block content %}
+<h2>Create Album</h2>
 <form action="{% url 'photoapp.views.new_album' %}" method="post">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Create" />

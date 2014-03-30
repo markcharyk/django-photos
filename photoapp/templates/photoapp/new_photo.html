@@ -1,10 +1,13 @@
 {% extends 'photoapp/base.html' %}
 
-{% block title %}<h2>Add Photo</h2>{% endblock %}
+{% block title %}Add Photo to {{ album.title }}{% endblock %}
 
 {% block content %}
+
+<h2>Add Photo</h2>
 <form action="{% url 'photoapp.views.new_photo' album.pk %}" method="post" enctype="multipart/form-data">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Submit" />
 </form>
+<p>(Yeah, it's probably not going to work with any file bigger than a megabyte so best not try)</p>
 {% endblock %}
