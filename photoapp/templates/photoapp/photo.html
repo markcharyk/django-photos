@@ -1,13 +1,17 @@
 {% extends 'photoapp/base.html' %}
 {% load staticfiles %}
+{% load thumbnail %}
 
 {% block title %}photo{{ photo.pk }}{% endblock %}
 
 {% block content %}
+    <h2>Photo in {{ album.title }}</h2>
     {% if owner %}{% else %}
         <p>by {{photo.photog}}</p>
     {% endif %}
-    <img src="{% static photo.image.url %}" /><br>
+    {% thumbnail photo.image "800x800" as im %}
+        <a href="{% static photo.image.url %}"><img src="{{ im.url }}"/></a><br>
+    {% endthumbnail %}
     <a>{{ photo.caption }}</a><br>
     <h5>Tags:</h5>
     {% for tag in photo.tag_set.all %}

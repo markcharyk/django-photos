@@ -3,7 +3,6 @@ from fabric.api import env
 from fabric.api import prompt
 from fabric.api import execute
 from fabric.api import sudo
-from fabric.api import cd
 from fabric.contrib.project import rsync_project
 import boto.ec2
 import time

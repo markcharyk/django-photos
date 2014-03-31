@@ -4,8 +4,8 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required, permission_required
 from photoapp.forms import AlbumForm, PhotoForm, TagForm
+from django.forms import forms
 from re import sub
-
 
 # def stub_view(request, *args, **kwargs):
 #     body = "Stub view\n\n"

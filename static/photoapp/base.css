@@ -1,6 +1,9 @@
 body {
     background: #F5DAC9
 }
+input {
+    border-radius: 10px;
+}
 #loginout {
     text-align: right;
 }

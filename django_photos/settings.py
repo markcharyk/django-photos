@@ -103,3 +103,5 @@ class Dev(Base):
     DEFAULT_FROM_EMAIL = 'testing@example.com'
 
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+    FILE_UPLOAD_MAX_MEMORY_SIZE = 1048576
